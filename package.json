@@ -1,0 +1,43 @@
+{
+  "name": "squadgoo-backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "migration:create": "npx typeorm migration:create ./src/migrations/InitialMigration",
+    "migration:generate": "npx ts-node ./node_modules/typeorm/cli.js migration:generate ./src/migrations/addedReportorBlockTables -d ./src/data-source.ts",
+    "migration:run": "npx ts-node ./node_modules/typeorm/cli.js migration:run -d ./src/data-source.ts",
+    "migration:revert": "npx ts-node ./node_modules/typeorm/cli.js migration:revert -d ./src/data-source.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "bcryptjs": "^3.0.2",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.3",
+    "express": "^5.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "nodemailer": "^7.0.10",
+    "pg": "^8.16.3",
+    "reflect-metadata": "^0.2.2",
+    "ts-node": "^10.9.2",
+    "typeorm": "^0.3.27",
+    "zod": "^4.1.12",
+    "zod-validation-error": "^4.0.2"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.4",
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/node": "^24.9.1",
+    "@types/nodemailer": "^7.0.3",
+    "ts-node-dev": "^2.0.0",
+    "typeorm-ts-node-commonjs": "^0.3.20",
+    "typescript": "^5.9.3"
+  }
+}
