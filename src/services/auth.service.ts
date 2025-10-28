@@ -13,9 +13,7 @@ import {
 } from "../validators/auth.validation";
 import { VerificationPurpose } from "../enums/Verification.enums";
 
-// ─────────────────────────────────────────────
-// 🔹 REGISTER USER
-// ─────────────────────────────────────────────
+// REGISTER USER
 export const registerUser = async (data: RegisterInput) => {
     const { firstName, lastName, email, password, referralCode, role } = data;
 
@@ -66,9 +64,7 @@ export const registerUser = async (data: RegisterInput) => {
     return { email: user.email };
 };
 
-// ─────────────────────────────────────────────
-// 🔹 VERIFY EMAIL (SIGNUP OTP)
-// ─────────────────────────────────────────────
+// VERIFY EMAIL (SIGNUP OTP)
 export const verifyEmail = async (data: verifyEmailInput) => {
     const { email, code } = data;
 
@@ -106,9 +102,7 @@ export const verifyEmail = async (data: verifyEmailInput) => {
     };
 };
 
-// ─────────────────────────────────────────────
-// 🔹 RESEND VERIFICATION CODE
-// ─────────────────────────────────────────────
+// RESEND VERIFICATION CODE
 export const resendVerification = async (email: string) => {
     const user = await UserRepository.findOne({ where: { email: email.toLowerCase() } });
     if (!user) throw new BadRequestError("User not found.");
@@ -137,9 +131,7 @@ export const resendVerification = async (email: string) => {
     return { email: user.email };
 };
 
-// ─────────────────────────────────────────────
-// 🔹 LOGIN USER
-// ─────────────────────────────────────────────
+// LOGIN USER
 export const loginUser = async (data: loginInput) => {
     const { email, password } = data;
     const user = await UserRepository.findOne({
@@ -184,9 +176,7 @@ export const loginUser = async (data: loginInput) => {
     };
 };
 
-// ─────────────────────────────────────────────
-// 🔹 FORGOT PASSWORD (SEND OTP)
-// ─────────────────────────────────────────────
+// FORGOT PASSWORD (SEND OTP)
 export const forgotPassword = async (data: ForgotPasswordInput) => {
     const { email } = data;
     const user = await UserRepository.findOne({ where: { email: email.toLowerCase() } });
@@ -212,9 +202,7 @@ export const forgotPassword = async (data: ForgotPasswordInput) => {
     return { email: user.email };
 };
 
-// ─────────────────────────────────────────────
-// 🔹 VERIFY FORGOT PASSWORD OTP
-// ─────────────────────────────────────────────
+// VERIFY FORGOT PASSWORD OTP
 export const verifyForgotOtp = async (data: VerifyForgotOtpInput) => {
     const { email, code } = data;
 
@@ -239,9 +227,7 @@ export const verifyForgotOtp = async (data: VerifyForgotOtpInput) => {
     return { email: user.email };
 };
 
-// ─────────────────────────────────────────────
-// 🔹 RESET PASSWORD (AFTER OTP VERIFIED)
-// ─────────────────────────────────────────────
+// RESET PASSWORD (AFTER OTP VERIFIED)
 export const resetPassword = async (data: ResetPasswordInput) => {
     const { email, newPassword } = data;
 
