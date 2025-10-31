@@ -12,8 +12,9 @@ import {
     VerifyForgotOtpInput,
 } from "../validators/auth.validation";
 import { VerificationPurpose } from "../enums/Verification.enums";
+import { RoleEnum } from "../enums/Role.enums";
+import { JobSeekerRepository, RecruiterRepository } from "../repositories";
 
-// REGISTER USER
 export const registerUser = async (data: RegisterInput) => {
     const { firstName, lastName, email, password, referralCode, role } = data;
 
@@ -22,7 +23,7 @@ export const registerUser = async (data: RegisterInput) => {
     });
     if (existing) throw new BadRequestError("Email already registered.");
 
-    // Create the base user (no password inside user)
+    // Create base user
     const user = UserRepository.create({
         firstName,
         lastName,
@@ -33,20 +34,35 @@ export const registerUser = async (data: RegisterInput) => {
     });
     await UserRepository.save(user);
 
-    // Create hashed password entry in verification table
+    // Create linked entity based on role
+    if (role === RoleEnum.JOBSEEKER) {
+        const jobSeeker = JobSeekerRepository.create({ user });
+        await JobSeekerRepository.save(jobSeeker);
+    }
+
+    if (role === RoleEnum.RECRUITER) {
+        const recruiter = RecruiterRepository.create({
+            user,
+            companyName: "", // you can require this later via onboarding
+        });
+        await RecruiterRepository.save(recruiter);
+    }
+
+    // Create password hash
     const passwordHash = await bcrypt.hash(password, 10);
     const passwordRecord = UserVerificationRepository.create({
         user,
         passwordHash,
         purpose: VerificationPurpose.PASSWORD,
         isUsed: true,
-        expiresAt: new Date(), // irrelevant for password
+        expiresAt: new Date(),
     });
     await UserVerificationRepository.save(passwordRecord);
 
     // Create signup OTP
     const verificationCode = Math.floor(100000 + Math.random() * 900000).toString();
-    const expiresAt = new Date(Date.now() + 15 * 60 * 1000); // 15 min
+    const expiresAt = new Date(Date.now() + 15 * 60 * 1000);
+
     const signupRecord = UserVerificationRepository.create({
         user,
         code: verificationCode,
@@ -55,6 +71,7 @@ export const registerUser = async (data: RegisterInput) => {
     });
     await UserVerificationRepository.save(signupRecord);
 
+    // Send email
     await sendEmail({
         to: user.email,
         subject: "SquadGoo Email Verification",

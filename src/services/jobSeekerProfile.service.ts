@@ -8,94 +8,109 @@ import {
 } from "../repositories";
 import {
   BasicDetailsInput,
+  ExperienceInput,
+  PreferencesInput,
+  EducationInput,
   TaxInfoInput,
   SocialLinksInput,
-  JobSeekerProfileInput,
 } from "../validators/jobSeekerProfile.validation";
 
-export const updateBasicDetails = async (userId: number, data: BasicDetailsInput) => {
+async function ensureJobSeeker(userId: number) {
   const user = await UserRepository.findOne({
     where: { id: userId },
-    relations: ["jobSeeker", "jobSeeker.basicDetails"],
+    relations: [
+      "jobSeeker",
+      "jobSeeker.basicDetails",
+      "jobSeeker.taxInfo",
+      "jobSeeker.socialLinks",
+    ],
   });
   if (!user) throw new BadRequestError("User not found.");
+
   let jobSeeker = user.jobSeeker;
-  if (!jobSeeker) throw new BadRequestError("Job Seeker profile not found.");
-
-  let basicDetails = jobSeeker.basicDetails;
-  if (!basicDetails) {
-    basicDetails = BasicDetailsRepository.create({ ...data });
-    await BasicDetailsRepository.save(basicDetails);
-    jobSeeker.basicDetails = basicDetails;
-  } else {
-    Object.assign(basicDetails, data);
-    await BasicDetailsRepository.save(basicDetails);
+  if (!jobSeeker) {
+    jobSeeker = JobSeekerRepository.create({ user });
+    await JobSeekerRepository.save(jobSeeker);
   }
+  return jobSeeker;
+}
 
+// Basic Details
+export const updateBasicDetails = async (userId: number, data: BasicDetailsInput) => {
+  const jobSeeker = await ensureJobSeeker(userId);
+  let basicDetails = jobSeeker.basicDetails;
+
+  if (!basicDetails) basicDetails = BasicDetailsRepository.create(data);
+  else Object.assign(basicDetails, data);
+
+  await BasicDetailsRepository.save(basicDetails);
+  jobSeeker.basicDetails = basicDetails;
   await JobSeekerRepository.save(jobSeeker);
   return basicDetails;
 };
 
-export const updateProfile = async (userId: number, data: JobSeekerProfileInput) => {
-  const user = await UserRepository.findOne({
-    where: { id: userId },
-    relations: ["jobSeeker"],
-  });
-  if (!user) throw new BadRequestError("User not found.");
-  let jobSeeker = user.jobSeeker;
-  if (!jobSeeker) throw new BadRequestError("Job Seeker profile not found.");
+// Job Experience
+export const updateExperience = async (userId: number, data: ExperienceInput) => {
+  const jobSeeker = await ensureJobSeeker(userId);
 
+  // Map each field explicitly so TypeORM picks up changes
+  jobSeeker.industry = data.industry ?? jobSeeker.industry;
+  jobSeeker.jobTitle = data.jobTitle ?? jobSeeker.jobTitle;
+  jobSeeker.jobDescription = data.jobDescription ?? jobSeeker.jobDescription;
+  jobSeeker.payRateMin = data.payRateMin ?? jobSeeker.payRateMin;
+  jobSeeker.payRateMax = data.payRateMax ?? jobSeeker.payRateMax;
+  jobSeeker.fromDate = data.fromDate ?? jobSeeker.fromDate;
+  jobSeeker.toDate = data.toDate ?? jobSeeker.toDate;
+
+  await JobSeekerRepository.save(jobSeeker);
+  return jobSeeker;
+};
+
+// Job Preferences
+export const updatePreferences = async (userId: number, data: PreferencesInput) => {
+  const jobSeeker = await ensureJobSeeker(userId);
   Object.assign(jobSeeker, data);
   await JobSeekerRepository.save(jobSeeker);
   return jobSeeker;
 };
 
+// Education & Qualifications
+export const updateEducation = async (userId: number, data: EducationInput) => {
+  const jobSeeker = await ensureJobSeeker(userId);
+  Object.assign(jobSeeker, data);
+  await JobSeekerRepository.save(jobSeeker);
+  return jobSeeker;
+};
+
+// Tax Info
 export const updateTaxInfo = async (userId: number, data: TaxInfoInput) => {
-  const user = await UserRepository.findOne({
-    where: { id: userId },
-    relations: ["jobSeeker", "jobSeeker.taxInfo"],
-  });
-  if (!user) throw new BadRequestError("User not found.");
-  let jobSeeker = user.jobSeeker;
-  if (!jobSeeker) throw new BadRequestError("Job Seeker profile not found.");
-
+  const jobSeeker = await ensureJobSeeker(userId);
   let taxInfo = jobSeeker.taxInfo;
-  if (!taxInfo) {
-    taxInfo = TaxInfoRepository.create({ ...data });
-    await TaxInfoRepository.save(taxInfo);
-    jobSeeker.taxInfo = taxInfo;
-  } else {
-    Object.assign(taxInfo, data);
-    await TaxInfoRepository.save(taxInfo);
-  }
 
+  if (!taxInfo) taxInfo = TaxInfoRepository.create(data);
+  else Object.assign(taxInfo, data);
+
+  await TaxInfoRepository.save(taxInfo);
+  jobSeeker.taxInfo = taxInfo;
   await JobSeekerRepository.save(jobSeeker);
   return taxInfo;
 };
 
+// Social Links
 export const updateSocialLinks = async (userId: number, data: SocialLinksInput) => {
-  const user = await UserRepository.findOne({
-    where: { id: userId },
-    relations: ["jobSeeker", "jobSeeker.socialLinks"],
-  });
-  if (!user) throw new BadRequestError("User not found.");
-  let jobSeeker = user.jobSeeker;
-  if (!jobSeeker) throw new BadRequestError("Job Seeker profile not found.");
-
+  const jobSeeker = await ensureJobSeeker(userId);
   let socialLinks = jobSeeker.socialLinks;
-  if (!socialLinks) {
-    socialLinks = SocialLinksRepository.create({ ...data });
-    await SocialLinksRepository.save(socialLinks);
-    jobSeeker.socialLinks = socialLinks;
-  } else {
-    Object.assign(socialLinks, data);
-    await SocialLinksRepository.save(socialLinks);
-  }
 
+  if (!socialLinks) socialLinks = SocialLinksRepository.create(data);
+  else Object.assign(socialLinks, data);
+
+  await SocialLinksRepository.save(socialLinks);
+  jobSeeker.socialLinks = socialLinks;
   await JobSeekerRepository.save(jobSeeker);
   return socialLinks;
 };
 
+// Full Profile
 export const getProfile = async (userId: number) => {
   const user = await UserRepository.findOne({
     where: { id: userId },
@@ -106,7 +121,6 @@ export const getProfile = async (userId: number) => {
       "jobSeeker.socialLinks",
     ],
   });
-
   if (!user) throw new BadRequestError("User not found.");
   return user.jobSeeker;
 };

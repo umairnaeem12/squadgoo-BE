@@ -10,6 +10,6 @@ AppRouter.get('/', (req, res) => {
 
 AppRouter.use('/auth', AuthRouter);
 AppRouter.use('/profile', ProfileRouter);
-AppRouter.use('/recruiter', JobSeekerProfileRouter);
+AppRouter.use('/jobSeeker', JobSeekerProfileRouter);
 
 export default AppRouter;

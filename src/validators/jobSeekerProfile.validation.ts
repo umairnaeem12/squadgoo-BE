@@ -1,5 +1,6 @@
 import { z } from "zod";
 
+// Basic Details
 export const basicDetailsSchema = z.object({
   firstName: z.string().optional(),
   lastName: z.string().optional(),
@@ -9,37 +10,23 @@ export const basicDetailsSchema = z.object({
   homeAddress: z.string().optional(),
   bio: z.string().optional(),
 });
-
 export type BasicDetailsInput = z.infer<typeof basicDetailsSchema>;
 
-export const taxInfoSchema = z.object({
-  taxFileNumber: z.string().optional(),
-  australianBusinessNumber: z.string().optional(),
-  taxResidencyStatus: z.string().optional(),
-});
-
-export type TaxInfoInput = z.infer<typeof taxInfoSchema>;
-
-export const socialLinksSchema = z.object({
-  linkedinProfile: z.string().url().optional(),
-  facebookProfile: z.string().url().optional(),
-  twitterProfile: z.string().url().optional(),
-  instagramProfile: z.string().url().optional(),
-  githubProfile: z.string().url().optional(),
-});
-
-export type SocialLinksInput = z.infer<typeof socialLinksSchema>;
-
-export const jobSeekerProfileSchema = z.object({
-  resumeUrl: z.string().optional(),
-  skills: z.string().optional(),
-  jobTitle: z.string().optional(),
+// Job Experience
+export const experienceSchema = z.object({
   industry: z.string().optional(),
+  jobTitle: z.string().optional(),
   jobDescription: z.string().optional(),
-  payRateMin: z.number().optional(),
-  payRateMax: z.number().optional(),
-  fromDate: z.string().optional(),
-  toDate: z.string().optional(),
+  payRateMin: z.coerce.number().optional(),
+  payRateMax: z.coerce.number().optional(),
+  fromDate: z.coerce.date().optional(),
+  toDate: z.coerce.date().optional(),
+});
+
+export type ExperienceInput = z.infer<typeof experienceSchema>;
+
+// Job Preferences
+export const preferencesSchema = z.object({
   preferredIndustry: z.string().optional(),
   preferredJobTitle: z.string().optional(),
   expectedPayMin: z.number().optional(),
@@ -50,6 +37,11 @@ export const jobSeekerProfileSchema = z.object({
   manualOffers: z.boolean().optional(),
   quickOffers: z.boolean().optional(),
   receiveWithinKm: z.number().optional(),
+});
+export type PreferencesInput = z.infer<typeof preferencesSchema>;
+
+// Education & Qualification
+export const educationSchema = z.object({
   qualificationType: z.string().optional(),
   institution: z.string().optional(),
   yearCompleted: z.number().optional(),
@@ -59,5 +51,23 @@ export const jobSeekerProfileSchema = z.object({
   issueDate: z.string().optional(),
   expiryDate: z.string().optional(),
 });
+export type EducationInput = z.infer<typeof educationSchema>;
 
-export type JobSeekerProfileInput = z.infer<typeof jobSeekerProfileSchema>;
+// Tax Info
+export const taxInfoSchema = z.object({
+  taxFileNumber: z.string().optional(),
+  australianBusinessNumber: z.string().optional(),
+  taxResidencyStatus: z.string().optional(),
+});
+export type TaxInfoInput = z.infer<typeof taxInfoSchema>;
+
+// Social Links
+export const socialLinksSchema = z.object({
+  linkedinProfile: z.string().url().optional(),
+  facebookProfile: z.string().url().optional(),
+  twitterProfile: z.string().url().optional(),
+  instagramProfile: z.string().url().optional(),
+  githubProfile: z.string().url().optional(),
+});
+
+export type SocialLinksInput = z.infer<typeof socialLinksSchema>;

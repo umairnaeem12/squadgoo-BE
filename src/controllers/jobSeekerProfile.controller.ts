@@ -2,18 +2,20 @@ import { Request, Response, NextFunction } from "express";
 import { sendApiResponse } from "../utils/sendApiResponse";
 import {
   basicDetailsSchema,
+  experienceSchema,
+  preferencesSchema,
+  educationSchema,
   taxInfoSchema,
   socialLinksSchema,
-  jobSeekerProfileSchema,
 } from "../validators/jobSeekerProfile.validation";
 import { JobSeekerProfileService } from "../services/jobSeekerProfile.service";
+
+const getUserId = (req: Request) => (req as any).user?.id;
 
 export const updateBasicDetails = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const parsed = basicDetailsSchema.parse(req.body);
-    const userId = (req as any).user?.id;
-    if (!userId) return sendApiResponse(res, 401, "Unauthorized");
-
+    const userId = getUserId(req);
     const result = await JobSeekerProfileService.updateBasicDetails(userId, parsed);
     return sendApiResponse(res, 200, "Basic details updated successfully", result);
   } catch (error) {
@@ -21,14 +23,34 @@ export const updateBasicDetails = async (req: Request, res: Response, next: Next
   }
 };
 
-export const updateProfile = async (req: Request, res: Response, next: NextFunction) => {
+export const updateExperience = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const parsed = jobSeekerProfileSchema.parse(req.body);
-    const userId = (req as any).user?.id;
-    if (!userId) return sendApiResponse(res, 401, "Unauthorized");
+    const parsed = experienceSchema.parse(req.body);
+    const userId = getUserId(req);
+    const result = await JobSeekerProfileService.updateExperience(userId, parsed);
+    return sendApiResponse(res, 200, "Experience updated successfully", result);
+  } catch (error) {
+    next(error);
+  }
+};
 
-    const result = await JobSeekerProfileService.updateProfile(userId, parsed);
-    return sendApiResponse(res, 200, "Profile updated successfully", result);
+export const updatePreferences = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const parsed = preferencesSchema.parse(req.body);
+    const userId = getUserId(req);
+    const result = await JobSeekerProfileService.updatePreferences(userId, parsed);
+    return sendApiResponse(res, 200, "Preferences updated successfully", result);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const updateEducation = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const parsed = educationSchema.parse(req.body);
+    const userId = getUserId(req);
+    const result = await JobSeekerProfileService.updateEducation(userId, parsed);
+    return sendApiResponse(res, 200, "Education updated successfully", result);
   } catch (error) {
     next(error);
   }
@@ -37,9 +59,7 @@ export const updateProfile = async (req: Request, res: Response, next: NextFunct
 export const updateTaxInfo = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const parsed = taxInfoSchema.parse(req.body);
-    const userId = (req as any).user?.id;
-    if (!userId) return sendApiResponse(res, 401, "Unauthorized");
-
+    const userId = getUserId(req);
     const result = await JobSeekerProfileService.updateTaxInfo(userId, parsed);
     return sendApiResponse(res, 200, "Tax info updated successfully", result);
   } catch (error) {
@@ -50,9 +70,7 @@ export const updateTaxInfo = async (req: Request, res: Response, next: NextFunct
 export const updateSocialLinks = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const parsed = socialLinksSchema.parse(req.body);
-    const userId = (req as any).user?.id;
-    if (!userId) return sendApiResponse(res, 401, "Unauthorized");
-
+    const userId = getUserId(req);
     const result = await JobSeekerProfileService.updateSocialLinks(userId, parsed);
     return sendApiResponse(res, 200, "Social links updated successfully", result);
   } catch (error) {
@@ -62,9 +80,7 @@ export const updateSocialLinks = async (req: Request, res: Response, next: NextF
 
 export const getProfile = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const userId = (req as any).user?.id;
-    if (!userId) return sendApiResponse(res, 401, "Unauthorized");
-
+    const userId = getUserId(req);
     const profile = await JobSeekerProfileService.getProfile(userId);
     return sendApiResponse(res, 200, "Profile fetched successfully", profile);
   } catch (error) {

@@ -7,7 +7,9 @@ const JobSeekerProfileRouter = Router();
 JobSeekerProfileRouter.use(jobSeekerMiddleware);
 
 JobSeekerProfileRouter.post("/updateBasicDetails", JobSeekerProfileController.updateBasicDetails);
-JobSeekerProfileRouter.post("/updateProfile", JobSeekerProfileController.updateProfile);
+JobSeekerProfileRouter.post("/updateExperience", JobSeekerProfileController.updateExperience);
+JobSeekerProfileRouter.post("/updatePreferences", JobSeekerProfileController.updatePreferences);
+JobSeekerProfileRouter.post("/updateEducation", JobSeekerProfileController.updateEducation);
 JobSeekerProfileRouter.post("/updateTaxInfo", JobSeekerProfileController.updateTaxInfo);
 JobSeekerProfileRouter.post("/updateSocialLinks", JobSeekerProfileController.updateSocialLinks);
 JobSeekerProfileRouter.get("/getProfile", JobSeekerProfileController.getProfile);
