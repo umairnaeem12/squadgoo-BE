@@ -40,6 +40,28 @@ export default class User {
     @Column({ default: false })
     isEmailVerified!: boolean;
 
+    // Address Fields
+    @Column({ nullable: true })
+    fullAddress?: string;
+
+    @Column({ nullable: true })
+    country?: string;
+
+    @Column({ nullable: true })
+    state?: string;
+
+    @Column({ nullable: true })
+    suburb?: string;
+
+    @Column({ nullable: true })
+    unit?: string;
+
+    @Column({ nullable: true })
+    houseNumber?: string;
+
+    @Column({ nullable: true })
+    streetName?: string;
+
     @CreateDateColumn()
     createdAt!: Date;
 
