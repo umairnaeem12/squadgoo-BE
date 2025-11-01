@@ -7,6 +7,7 @@ import {
   educationSchema,
   taxInfoSchema,
   socialLinksSchema,
+  updateAddressSchema,
 } from "../validators/jobSeekerProfile.validation";
 import { JobSeekerProfileService } from "../services/jobSeekerProfile.service";
 
@@ -29,6 +30,20 @@ export const updateExperience = async (req: Request, res: Response, next: NextFu
     const userId = getUserId(req);
     const result = await JobSeekerProfileService.updateExperience(userId, parsed);
     return sendApiResponse(res, 200, "Experience updated successfully", result);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const updateAddress = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const parsed = updateAddressSchema.parse(req.body);
+    const userId = getUserId(req);
+
+    if (!userId) return sendApiResponse(res, 401, "Unauthorized");
+
+    const data = await JobSeekerProfileService.updateAddress(userId, parsed);
+    return sendApiResponse(res, 200, "Address updated successfully.", data);
   } catch (error) {
     next(error);
   }

@@ -8,6 +8,7 @@ JobSeekerProfileRouter.use(jobSeekerMiddleware);
 
 JobSeekerProfileRouter.post("/updateBasicDetails", JobSeekerProfileController.updateBasicDetails);
 JobSeekerProfileRouter.post("/updateExperience", JobSeekerProfileController.updateExperience);
+JobSeekerProfileRouter.post("/updateAddress", JobSeekerProfileController.updateAddress);
 JobSeekerProfileRouter.post("/updatePreferences", JobSeekerProfileController.updatePreferences);
 JobSeekerProfileRouter.post("/updateEducation", JobSeekerProfileController.updateEducation);
 JobSeekerProfileRouter.post("/updateTaxInfo", JobSeekerProfileController.updateTaxInfo);

@@ -13,6 +13,7 @@ import {
   EducationInput,
   TaxInfoInput,
   SocialLinksInput,
+  updateAddressInput,
 } from "../validators/jobSeekerProfile.validation";
 
 async function ensureJobSeeker(userId: number) {
@@ -64,6 +65,33 @@ export const updateExperience = async (userId: number, data: ExperienceInput) =>
 
   await JobSeekerRepository.save(jobSeeker);
   return jobSeeker;
+};
+
+export const updateAddress = async (userId: number, input: updateAddressInput) => {
+  const user = await UserRepository.findOne({ where: { id: userId } });
+  if (!user) throw new BadRequestError("User not found.");
+
+  user.fullAddress = input.fullAddress;
+  user.country = input.country;
+  user.state = input.state;
+  user.suburb = input.suburb;
+  user.unit = input.unit ?? undefined;
+  user.houseNumber = input.houseNumber ?? undefined;
+  user.streetName = input.streetName ?? undefined;
+
+  await UserRepository.save(user);
+
+  return {
+    id: user.id,
+    fullAddress: user.fullAddress,
+    country: user.country,
+    state: user.state,
+    suburb: user.suburb,
+    unit: user.unit,
+    houseNumber: user.houseNumber,
+    streetName: user.streetName,
+    updatedAt: user.updatedAt,
+  };
 };
 
 // Job Preferences

@@ -25,6 +25,18 @@ export const experienceSchema = z.object({
 
 export type ExperienceInput = z.infer<typeof experienceSchema>;
 
+export const updateAddressSchema = z.object({
+  fullAddress: z.string().min(2, "Full address is required"),
+  country: z.string().min(2, "Country is required"),
+  state: z.string().min(2, "State is required"),
+  suburb: z.string().min(2, "Suburb is required"),
+  unit: z.string().optional().nullable(),
+  houseNumber: z.string().optional().nullable(),
+  streetName: z.string().optional().nullable(),
+});
+
+export type updateAddressInput = z.infer<typeof updateAddressSchema>;
+
 // Job Preferences
 export const preferencesSchema = z.object({
   preferredIndustry: z.string().optional(),
