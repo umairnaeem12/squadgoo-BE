@@ -68,13 +68,27 @@ export const verifyForgotOtpController = async (req: Request, res: Response, nex
 };
 
 export const resetPasswordController = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const parsed = resetPasswordSchema.parse(req.body);
-    const data = await AuthService.resetPassword(parsed);
-    return sendApiResponse(res, 200, "Password reset successfully.", data);
-  } catch (error) {
-    next(error);
-  }
+    try {
+        const parsed = resetPasswordSchema.parse(req.body);
+        const data = await AuthService.resetPassword(parsed);
+        return sendApiResponse(res, 200, "Password reset successfully.", data);
+    } catch (error) {
+        next(error);
+    }
+};
+
+export const getProfile = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const userId = (req as any).user?.id;
+        const role = (req as any).user?.role;
+
+        if (!userId) return sendApiResponse(res, 401, "Unauthorized");
+
+        const data = await AuthService.getProfile(userId, role);
+        return sendApiResponse(res, 200, "Profile fetched successfully.", data);
+    } catch (error) {
+        next(error);
+    }
 };
 
 export * as AuthController from "./auth.controller";

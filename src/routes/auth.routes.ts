@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { AuthController } from "../controllers/auth.controller";
+import { authMiddleware } from "../middlewares/auth.middleware";
 
 const AuthRouter = Router();
 
@@ -10,6 +11,7 @@ AuthRouter.post("/login", AuthController.login);
 AuthRouter.post("/forgot-password", AuthController.forgotPasswordController);
 AuthRouter.post("/verify-forgot-otp", AuthController.verifyForgotOtpController);
 AuthRouter.post("/reset-password", AuthController.resetPasswordController);
+AuthRouter.get("/me", authMiddleware, AuthController.getProfile);
 
 
 export default AuthRouter;

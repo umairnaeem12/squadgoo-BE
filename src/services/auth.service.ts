@@ -280,4 +280,41 @@ export const resetPassword = async (data: ResetPasswordInput) => {
     return { email: user.email };
 };
 
+export const getProfile = async (userId: number, role: RoleEnum) => {
+    // Get base user
+    const user = await UserRepository.findOne({
+        where: { id: userId },
+        relations: ["jobSeeker", "recruiter"],
+    });
+
+    if (!user) throw new BadRequestError("User not found");
+
+    // Role-based data
+    if (role === RoleEnum.JOBSEEKER) {
+        const jobSeeker = await JobSeekerRepository.findOne({
+            where: { user: { id: userId } },
+            relations: ["basicDetails", "taxInfo", "socialLinks"],
+        });
+
+        return {
+            user,
+            profile: jobSeeker,
+        };
+    }
+
+    if (role === RoleEnum.RECRUITER) {
+        const recruiter = await RecruiterRepository.findOne({
+            where: { user: { id: userId } },
+            relations: ["basicDetails", "taxInfo", "socialLinks"],
+        });
+
+        return {
+            user,
+            profile: recruiter,
+        };
+    }
+
+    return { user };
+};
+
 export * as AuthService from "./auth.service";
